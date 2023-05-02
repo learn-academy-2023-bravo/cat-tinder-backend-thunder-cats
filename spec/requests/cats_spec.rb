@@ -52,26 +52,54 @@ RSpec.describe "Cats", type: :request do
         }
       }
 
-      # post :create, cat_params
-      @update = Cat.first 
+      post '/cats', params: cat_params
+      cat = Cat.first
       update_params = {
-          cat:{
+          cat: {
           name: "newnew",
           age:3,
           breed:"siamese",
-          hobbies:"smoking catnip",
+          hobbies:"smelling catnip",
           image:"https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554__340.jpg"
         }
       }
-     patch :update, params: { id: @update.id, cat: updated_params[:cat]}
+     patch "/cats/#{cat.id}", params: update_params
      expect(response).to have_http_status(200)
+     new_cat = Cat.first
+     expect(new_cat.name).to eq "newnew"
 
      
     end
   end
 
-
-
+    describe "DELETE/destroy" do
+      it "deletes existing cat" do
+        cat_params = {
+        cat: {
+          name:"Nermal",
+          age:5,
+          breed:"Tabby",
+          hobbies:"Being emotionally dependent on other cats",
+          image:"https://www.istockphoto.com/photo/funny-british-shorthair-cat-portrait-looking-shocked-or-surprised-gm1361394182-433852083?utm_source=unsplash&utm_medium=affiliate&utm_campaign=srp_photos_top&utm_content=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fcats&utm_term=cats%3A%3A%3A"
+        }
+      }
+    post '/cats', params: cat_params
+      cat = Cat.first
+      delete_params = {
+        cat: {
+          name:"Nermal",
+          age:5,
+          breed:"Tabby",
+          hobbies:"Being emotionally dependent on other cats",
+          image:"https://www.istockphoto.com/photo/funny-british-shorthair-cat-portrait-looking-shocked-or-surprised-gm1361394182-433852083?utm_source=unsplash&utm_medium=affiliate&utm_campaign=srp_photos_top&utm_content=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fcats&utm_term=cats%3A%3A%3A"
+        
+      }
+    }
+    delete "/cats/#{cat.id}", params: delete_params
+    expect(response).to have_http_status(204)
+    expect(Cat.exists?(cat.id)).to be_falsey
+  end
+ end
 
 
 

@@ -20,6 +20,11 @@ class CatsController < ApplicationController
     end
 
     def destroy
+        cat = Cat.find(params[:id])
+        cat.destroy
+        if cat.destroy
+            head :no_content
+        end
     end
 
 
