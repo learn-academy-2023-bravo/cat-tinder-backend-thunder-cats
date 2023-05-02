@@ -101,6 +101,35 @@ RSpec.describe "Cats", type: :request do
   end
  end
 
+  describe "cannot update a cat without valid attributes" do 
+    it "cannot update a cat without a name" do 
+      cat_params = {
+        cat: {
+          name:"Nermal",
+          age:5,
+          breed:"Tabby",
+          hobbies:"Being emotionally dependent on other cats",
+          image:"https://www.istockphoto.com/photo/funny-british-shorthair-cat-portrait-looking-shocked-or-surprised-gm1361394182-433852083?utm_source=unsplash&utm_medium=affiliate&utm_campaign=srp_photos_top&utm_content=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fcats&utm_term=cats%3A%3A%3A"
+        }
+      }
+      post '/cats', params: cat_params
+      cat = Cat.first
+      update_params = {
+        cat: {
+          name:"",
+          age:7,
+          breed:"Clone",
+          hobbies:"Being not emotionally dependent on other cats",
+          image:"https://www.istockphoto.com/photo/funny-british-shorthair-cat-portrait-looking-shocked-or-surprised-gm1361394182-433852083?utm_source=unsplash&utm_medium=affiliate&utm_campaign=srp_photos_top&utm_content=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fcats&utm_term=cats%3A%3A%3A"
+        }
+      }
+      patch "/cats/#{cat.id}", params: update_params
+      cat = JSON.parse(response.body)
+      expect(response).to have_http_status(422)
+      expect(cat['name']).to include "can't be blank"
+    end
+  end
+
 
 
 end
